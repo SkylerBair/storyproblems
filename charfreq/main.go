@@ -3,14 +3,14 @@ package main
 import "fmt"
 
 func main() {
-	frequency("mississippi")
-	fmt.Println(Output)
-}
+	fmt.Println(frequency("mississippi"))
 
-var Output = map[string]int{}
+	fmt.Println(frequency("dylan"))
+}
 
 //take a funbction that take a string and returns a map.
 func frequency(word string) map[string]int {
+	Output := map[string]int{}
 	for _, l := range word {
 		Output[string(l)]++
 	}
