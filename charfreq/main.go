@@ -3,9 +3,10 @@ package main
 import "fmt"
 
 func main() {
-	fmt.Println(frequency("mississippi"))
-
+	o := frequency("ass")
+	fmt.Println(o)
 	fmt.Println(frequency("dylan"))
+
 }
 
 //take a funbction that take a string and returns a map.
