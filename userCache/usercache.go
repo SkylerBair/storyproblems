@@ -2,15 +2,12 @@ package usercache
 
 import (
 	"errors"
+	"fmt"
 	"time"
 )
 
-// our main resource
-var userMap map[string]*User
-
 type User struct {
-	username string
-	createAt time.Time
+	CreatedAt time.Time
 }
 
 type Storable interface {
@@ -20,11 +17,13 @@ type Storable interface {
 
 type storable struct {
 	lastCreated time.Time
+	userMap     map[string]*User
 }
 
 func New() Storable {
-	s := &storable{}
-	s.getLastCreated()
+	s := &storable{
+		userMap: make(map[string]*User),
+	}
 	return s
 }
 
@@ -33,11 +32,37 @@ func (s *storable) getLastCreated() time.Time {
 }
 
 func (s *storable) Get(key string) (*User, error) {
-	return nil, errors.New("torable{.Get}not impl")
+	v, exists := s.userMap[key]
+	if !exists {
+		return nil, fmt.Errorf("%v no user found", key)
+	}
+
+	return v, nil
 }
 
 func (s *storable) Set(key string, user *User) error {
-	return errors.New("not impl")
+	if err := validateKey(key); err != nil {
+		return err
+	}
+
+	s.userMap[key] = user
+	return nil
+}
+
+// disallowed tracks usersnames that are not allowed in our system
+var disallowed map[string]interface{}
+
+func validateKey(key string) error {
+	if len(key) > 32 {
+		return errors.New("ErrKeyTooLarge")
+	}
+	if key == "admin" {
+		return errors.New("ErrInvalid")
+	}
+	if _, ok := disallowed[key]; ok {
+		return errors.New("ErrInvalid")
+	}
+	return nil
 }
 
 // don't expose the resources directly, only through our own functions
